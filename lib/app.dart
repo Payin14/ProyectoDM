@@ -42,7 +42,7 @@ class _MyAppFormState extends State<MyAppForm> {
                 ),
               ),
               const Text(
-                'ENCUESTA',
+                'ENCUESTA Prueba Git',
                 style: TextStyle(
                   fontFamily: 'NerkoOne',
                   fontSize: 20.0,
