@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
+import 'dart:async';
 
 import 'admin.dart';
 import 'encuesta.dart';
+// Importa el paquete
+import 'package:flutter_dotenv/flutter_dotenv.dart' as Dotenv;
 
 class MyAppForm extends StatefulWidget {
   const MyAppForm({Key? key}) : super(key: key);
