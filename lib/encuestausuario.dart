@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:proyectodm/responderencuesta.dart';
 
 import 'alerts.dart';
-import 'encuestas.dart';
 
 class EncuestaUsuario extends StatefulWidget {
   const EncuestaUsuario({super.key, required this.title});

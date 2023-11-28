@@ -43,7 +43,7 @@ print(resultado);
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // Verificar si todas las respuestas fueron proporcionadas
-          if (respuestas.every((respuesta) => respuesta != null && respuesta!.isNotEmpty)) {
+          if (respuestas.every((respuesta) => respuesta != null && respuesta!.trim().isNotEmpty)) {
             mostrarAlertDialog1(context, 'Enviando respuestas...');
 
             // Lista para almacenar los futuros de las solicitudes HTTP
