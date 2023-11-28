@@ -44,7 +44,7 @@ print(resultado);
         onPressed: () async {
           // Verificar si todas las respuestas fueron proporcionadas
           if (respuestas.every((respuesta) => respuesta != null && respuesta!.isNotEmpty)) {
-            mostrarAlertDialog(context, 'Enviando respuestas...');
+            mostrarAlertDialog1(context, 'Enviando respuestas...');
 
             // Lista para almacenar los futuros de las solicitudes HTTP
             List<Future<void>> futures = [];

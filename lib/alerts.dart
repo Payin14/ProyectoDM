@@ -16,6 +16,22 @@ void mostrarAlertDialog(BuildContext context, String message) {
   );
 }
 
+void mostrarAlertDialog1(BuildContext context, String message) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context){
+      return WillPopScope(//Previene el cierre del dialog utilizando el boton regresar del telefono
+        onWillPop: () async => false,
+        child:  AlertDialog(
+        title: const Text('Enviando...'),
+        content: Text(message),
+        ),
+      );
+    } 
+  );
+}
+
 void cargandoDialog(BuildContext context, String message) {
   showDialog(
     context: context,
