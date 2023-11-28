@@ -1,51 +1,111 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-import 'Survey.dart';
+import 'alerts.dart';
+import 'encuestas.dart';
 
-class AdminSurveyView extends StatefulWidget {
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
+
   @override
-  _AdminSurveyViewState createState() => _AdminSurveyViewState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _AdminSurveyViewState extends State<AdminSurveyView> {
-  List<Survey> surveys = []; // Lista de encuestas
+class _MyHomePageState extends State<MyHomePage> {
+  final _formKey = GlobalKey<FormState>();
+  
+  Future<void> obtenerInformacionAPI() async {
+  if (!_formKey.currentState!.validate()) {
+    return;
+  }
+
+  mostrarAlertDialog(context, 'Buscando información...');
+
+  try {
+    // URL de la API con el nombre del país deseado
+    String apiUrl = 'http://127.0.0.1:8000/api/obtenerTodasLasEncuestasConPreguntas';
+
+    var response = await http.get(Uri.parse(apiUrl));
+   
+    if (response.statusCode == 200) {
+      var data = response.body;
+print(data);
+      mostrarResultados(data);
+    }else{
+    Navigator.of(context, rootNavigator: true).pop();
+    mostrarError('No se encontraron datos', context);
+    }
+  } on SocketException {
+    Navigator.of(context, rootNavigator: true).pop();
+    mostrarError('Error de red: No se pudo conectar al servidor', context);
+  } catch (e) {
+    Navigator.of(context, rootNavigator: true).pop();
+    mostrarError('Otro error inesperado: $e', context);
+  }
+}
+
+  Future<void> mostrarResultados(dynamic data) async {
+    try {
+      var jsonResponse = json.decode(data);
+      
+      if (jsonResponse is Map) {
+        String message = jsonResponse['message'];
+        if (message == 'Encuestas y preguntas obtenidas con éxito') {
+            Navigator.of(context, rootNavigator: true).pop();
+            await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Resultado(
+                informacion: data,
+              ),
+            ),
+          );     
+        }     
+      } else {
+        Navigator.of(context, rootNavigator: true).pop();
+        mostrarError('Error: Respuesta de la API inesperada.', context);
+      }
+    } catch (e) {
+      Navigator.of(context, rootNavigator: true).pop();
+      mostrarError('Error al procesar la respuesta de la API', context);      
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Administrador de Encuestas'),
+        title: const Text('Encuestas'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Encuestas Disponibles:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: surveys.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 3,
-                    margin: EdgeInsets.symmetric(vertical: 8),
-                    child: ListTile(
-                      title: Text(surveys[index].title),
-                      subtitle:
-                          Text('Preguntas: ${surveys[index].questions.length}'),
-                      onTap: () {
-                        // Aquí puedes manejar la navegación a la vista de detalles de la encuesta
-                        // Por ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => SurveyDetailsView(survey: surveys[index])));
-                      },
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 30),
+                Container(
+                  alignment: Alignment.center,
+                  child: ElevatedButton.icon(
+                    onPressed: obtenerInformacionAPI,
+                    icon: const Icon(Icons.search),
+                    label: const Text('Ver encuestas', style: TextStyle(fontSize: 20)),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

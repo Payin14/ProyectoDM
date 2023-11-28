@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'admin.dart';
-import 'encuesta.dart';
+import 'encuestausuario.dart';
 // Importa el paquete
 
 class MyAppForm extends StatefulWidget {
@@ -128,7 +128,7 @@ class _MyAppFormState extends State<MyAppForm> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SurveyPage(),
+                          builder: (context) => EncuestaUsuario(title: '',),
                         ),
                       );
                     } else if(_nombre == 'admin' &&
@@ -137,7 +137,7 @@ class _MyAppFormState extends State<MyAppForm> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AdminSurveyView(),
+                                  builder: (context) => MyHomePage(title: '',),
                                 ),
                               );
                     }else{  
