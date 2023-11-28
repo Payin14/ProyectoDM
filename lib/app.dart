@@ -1,155 +1,119 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'dart:convert';
 import 'package:flutter/material.dart';
-
-import 'admin.dart';
-import 'encuesta.dart';
-
-class MyAppForm extends StatefulWidget {
-  const MyAppForm({Key? key}) : super(key: key);
+import 'package:http/http.dart';
+import 'package:proyectodm/admin.dart';
+import 'encuestausuario.dart';
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  _MyAppFormState createState() => _MyAppFormState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _MyAppFormState extends State<MyAppForm> {
-  late String _nombre = '';
-  late String _email = '';
-  late String _password = '';
+class _SignUpScreenState extends State<SignUpScreen> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  void login() async {
+    try {
+      Response response = await post(
+        Uri.parse('http://127.0.0.1:8000/api/Login'),
+        body: {
+          'usuario': emailController.text,
+          'pass': passwordController.text,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body.toString());
+        print(data['mensaje']);
+        print('Login successfully');
+        if (data['mensaje'] == "Login exitoso Administrador") {
+           Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage(title: 'title')),
+        );
+        } else {
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => EncuestaUsuario(title: 'title')),
+        );
+        }
+      } else {
+        // Mostrar un mensaje de error si las credenciales son incorrectas
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Credenciales incorrectas. Intenta de nuevo.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[100],
-      body: ListView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 40.0,
-          vertical: 90.0,
+      appBar: AppBar(
+        title: const Text('iniciar sesión '),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextFormField(
+              controller: emailController,
+              decoration: InputDecoration(
+                hintText: 'Email',
+              ),
+            ),
+            SizedBox(height: 20,),
+            TextFormField(
+              controller: passwordController,
+               obscureText: true, 
+              decoration: InputDecoration(
+                hintText: 'Password',
+                
+              ),
+            ),
+            SizedBox(height: 40,),
+            GestureDetector(
+              onTap: () {
+                login();
+              },
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Text('Login'),
+                ),
+              ),
+            )
+          ],
         ),
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const CircleAvatar(
-                radius: 100.0,
-                backgroundColor: Colors.transparent,
-                backgroundImage: NetworkImage('https://sic.cultura.gob.mx/images/65754'),
-              ),
-              const Text(
-                'Iniciar sesion',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'NerkoOne',
-                  fontSize: 50.0,
-                ),
-              ),
-              const Text(
-                'ENCUESTA',
-                style: TextStyle(
-                  fontFamily: 'NerkoOne',
-                  fontSize: 20.0,
-                ),
-              ),
-              SizedBox(
-                width: 160.0,
-                height: 15.0,
-                child: Divider(color: Colors.blueGrey[600]),
-              ),
-              TextField(
-                enableInteractiveSelection: false,
-                decoration: InputDecoration(
-                  hintText: 'USER-NAME',
-                  labelText: 'User name',
-                  suffixIcon: const Icon(Icons.verified_user),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-                onChanged: (valor) {
-                  _nombre = valor;
-                },
-              ),
-              const Divider(
-                height: 18.0,
-              ),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Email',
-                  labelText: 'Email',
-                  suffixIcon: const Icon(Icons.alternate_email),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-                onChanged: (valor) {
-                  _email = valor;
-                },
-              ),
-              const Divider(
-                height: 15.0,
-              ),
-              TextField(
-                enableInteractiveSelection: false,
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  labelText: 'Password',
-                  suffixIcon: const Icon(Icons.lock_outline),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-                onChanged: (valor) {
-                  _password = valor;
-                },
-              ),
-              const Divider(
-                height: 15.0,
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.lightBlueAccent,
-                    onPrimary: Colors.white70,
-                    textStyle: const TextStyle(
-                      fontSize: 30.0,
-                      fontFamily: 'NerkoOne',
-                    ),
-                  ),
-                  onPressed: () {
-                    // Validar los valores ingresados
-                    print(_nombre);
-                    print(_email);
-                    print(_password);
-                    if (_nombre == 'usuario' &&
-                        _email == 'correo@example.com' &&
-                        _password == 'contrasena') {
-                      // Si son correctos, navegar a otra vista
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SurveyPage(),
-                        ),
-                      );
-                    } else if(_nombre == 'admin' &&
-                              _email == 'admin@example.com' &&
-                              _password == '123456') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => admin(),
-                                ),
-                              );
-                    }else{  
-                      // Mostrar un mensaje de error o realizar otra acción
-                      print('Credenciales incorrectas');
-                    }
-                  },
-                  child: Text('Sign In'),
-                ),
-              )
-            ],
-          ),
-        ],
+      ),
+    );
+  }
+}
+
+class DashboardScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Dashboard'),
+      ),
+      body: Center(
+        child: Text('Bienvenido al Dashboard'),
       ),
     );
   }
