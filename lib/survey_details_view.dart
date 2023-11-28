@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'Survey.dart';
+
 class SurveyDetailsView extends StatelessWidget {
   final Survey survey;
 
