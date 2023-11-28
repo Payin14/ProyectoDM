@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'Survey.dart';
+
 class AdminSurveyView extends StatefulWidget {
   @override
   _AdminSurveyViewState createState() => _AdminSurveyViewState();
