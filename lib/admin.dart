@@ -76,28 +76,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  // Función para cerrar sesión
-  void cerrarSesion() {
-    // Lógica para cerrar sesión
-    Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => SignUpScreen(),
-  ),
-);// Vuelve a la pantalla de inicio de sesión
-  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Encuestas'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: cerrarSesion,
-          ),
-        ],
       ),
       body: Center(
         child: SingleChildScrollView(

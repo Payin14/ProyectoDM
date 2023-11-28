@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:proyectodm/admin.dart';
+import 'alerts.dart';
 import 'encuestausuario.dart';
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -13,15 +14,16 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  TextEditingController emailController = TextEditingController();
+  TextEditingController usuarioController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   void login() async {
+    mostrarAlertDialog(context, 'Espere...');
     try {
       Response response = await post(
         Uri.parse('http://127.0.0.1:8000/api/Login'),
         body: {
-          'usuario': emailController.text,
+          'usuario': usuarioController.text,
           'pass': passwordController.text,
         },
       );
@@ -42,6 +44,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
         }
       } else {
+        Navigator.pop(context);
+        mostrarError('Credenciales incorrectas', context);
         // Mostrar un mensaje de error si las credenciales son incorrectas
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -68,9 +72,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextFormField(
-              controller: emailController,
+              controller: usuarioController,
               decoration: InputDecoration(
-                hintText: 'Email',
+                hintText: 'Usuario',
               ),
             ),
             SizedBox(height: 20,),
