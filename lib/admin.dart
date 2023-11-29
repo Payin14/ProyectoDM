@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:proyectodm/app.dart';
 
 import 'alerts.dart';
+import 'crearEncuesta.dart';
 import 'encuestas.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -106,6 +107,26 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 30),
+                Container(
+                alignment: Alignment.center,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    // Redirige a la vista "OtraVista"
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AgregarEncuesta()),
+                    );
+                  },
+                  icon: const Icon(Icons.search),
+                  label: const Text('Crear encuesta', style: TextStyle(fontSize: 20)),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                ),
+              ),
               ],
             ),
           ),
