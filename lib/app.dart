@@ -1,11 +1,11 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:proyectodm/CrearUsuario.dart';
 import 'package:proyectodm/admin.dart';
+import 'package:proyectodm/encuestausuario.dart';
 import 'alerts.dart';
-import 'encuestausuario.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
 
@@ -33,19 +33,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
         print(data['mensaje']);
         print('Login successfully');
         if (data['mensaje'] == "Login exitoso Administrador") {
-           Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MyHomePage(title: 'title')),
-        );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => MyHomePage(title: 'title')),
+          );
         } else {
           Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => EncuestaUsuario(title: 'title')),
-        );
+            context,
+            MaterialPageRoute(builder: (context) => EncuestaUsuario(title: 'title')),
+          );
         }
       } else {
         Navigator.pop(context);
-        mostrarError('Credenciales incorrectas', context);
         // Mostrar un mensaje de error si las credenciales son incorrectas
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -59,11 +58,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  void irACrearUsuario() {
+    // Navegar a la página de crear usuario
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => UserCreationScreen()),  // Reemplaza "CrearUsuarioPage" con el nombre de tu página de crear usuario
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('iniciar sesión '),
+        title: const Text('Iniciar Sesión'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -80,10 +87,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             SizedBox(height: 20,),
             TextFormField(
               controller: passwordController,
-               obscureText: true, 
+              obscureText: true, 
               decoration: InputDecoration(
                 hintText: 'Password',
-                
               ),
             ),
             SizedBox(height: 40,),
@@ -101,7 +107,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Text('Login'),
                 ),
               ),
-            )
+            ),
+            SizedBox(height: 20,),
+            ElevatedButton(
+              onPressed: irACrearUsuario,
+              child: Text('Crear Usuario'),
+            ),
           ],
         ),
       ),
@@ -109,15 +120,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 }
 
-class DashboardScreen extends StatelessWidget {
+class CrearUsuarioPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: Text('Crear Usuario'),
       ),
       body: Center(
-        child: Text('Bienvenido al Dashboard'),
+        child: Text('Esta es la página de crear usuario'),
       ),
     );
   }
