@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -74,7 +76,7 @@ class _EditarPreguntaViewState extends State<EditarPreguntaView> {
                 TextFormField(
                   initialValue: pregunta['texto_pregunta'],
                   onChanged: (value) {
-                    // Actualizar el valor en la lista de preguntas
+                    // Actualizar el valor en la lista de preguntas con ID y nuevo texto
                     pregunta['texto_pregunta'] = value;
                   },
                   decoration: const InputDecoration(
@@ -88,15 +90,24 @@ class _EditarPreguntaViewState extends State<EditarPreguntaView> {
                   },
                 ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // Validar el formulario antes de editar las preguntas
-                  if (_formKey.currentState?.validate() ?? false) {
-                    editarPreguntas(widget.idEncuesta, preguntas);
+             ElevatedButton(
+              onPressed: () {
+                // Validar el formulario antes de editar las preguntas
+                if (_formKey.currentState?.validate() ?? false) {
+                  // Crear una lista de preguntas con ID y nuevo texto
+                  List<Map<String, dynamic>> preguntasActualizadas = [];
+                  for (var pregunta in preguntas) {
+                    preguntasActualizadas.add({
+                      'id_pregunta': pregunta['id_pregunta'],
+                      'texto_pregunta': pregunta['texto_pregunta'],
+                    });
                   }
-                },
-                child: const Text('Editar Preguntas'),
-              ),
+                  // Llamar a la función editarPreguntas con la nueva lista
+                  editarPreguntas(preguntasActualizadas);
+                }
+              },
+              child: const Text('Editar Preguntas'),
+            ),
             ],
           ),
         ),
@@ -104,44 +115,60 @@ class _EditarPreguntaViewState extends State<EditarPreguntaView> {
     );
   }
 
-  void editarPreguntas(int idEncuesta, List<Map<String, dynamic>> preguntas) async {
-    mostrarAlertDialog(context, 'Editando preguntas...');
-    try {
-      // Realizar la solicitud HTTP para editar las preguntas
-      final response = await http.put(
-        Uri.parse('http://127.0.0.1:8000/api/editarPregunta'),
-        body: {
-          'id_encuesta': idEncuesta.toString(),
-          'preguntas': json.encode(preguntas),
-        },
-      );
-
-      // Manejar la respuesta de la API según sea necesario
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Preguntas editadas con éxito'),
-              content: const Text('Las preguntas se han editado correctamente.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    // Cerrar el diálogo y navegar hacia atrás
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Aceptar'),
-                ),
-              ],
-            );
+void editarPreguntas(List<Map<String, dynamic>> preguntas) async {
+  mostrarAlertDialog(context, 'Editando preguntas...');
+  try {
+    // Iterar sobre cada pregunta en la lista
+    for (var pregunta in preguntas) {
+      // Verificar si la pregunta ha sido editada
+      if (pregunta['texto_pregunta'] != pregunta['texto_pregunta_original']) {
+        // Realizar la solicitud HTTP para editar la pregunta actual
+        final response = await http.put(
+          Uri.parse('http://127.0.0.1:8000/api/editarPregunta/${pregunta['id_pregunta']}'),
+          body: {
+            'texto_pregunta': pregunta['texto_pregunta'],
           },
         );
+
+        // Manejar la respuesta de la API según sea necesario
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          print('Pregunta ${pregunta['id_pregunta']} editada con éxito');
+        } else {
+          print('Error al editar la pregunta ${pregunta['id_pregunta']}: ${response.statusCode}');
+        }
       } else {
-        mostrarError('Error al editar las preguntas: ${response.statusCode}', context);
+        // La pregunta no ha sido editada, imprimir un mensaje indicativo
+        print('La pregunta ${pregunta['id_pregunta']} no ha sido editada');
       }
-    } catch (error) {
-      mostrarError('Error al editar las preguntas: $error', context);
     }
+
+    // Cerrar el cuadro de diálogo
+    Navigator.pop(context);
+
+    // Mostrar un mensaje final al usuario
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Preguntas editadas con éxito'),
+          content: const Text('Las preguntas se han editado correctamente.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Cerrar el diálogo y navegar hacia atrás
+                Navigator.pop(context);
+              },
+              child: const Text('Aceptar'),
+            ),
+          ],
+        );
+      },
+    );
+  } catch (error) {
+    print(error);
+    mostrarError('Error al editar las preguntas: $error', context);
   }
+}
+
+
 }
