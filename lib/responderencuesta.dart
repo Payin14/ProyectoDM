@@ -1,21 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'alerts.dart';
+import 'package:http/http.dart' as http;
 
 class ResponderEncuestaView extends StatelessWidget {
-  final String informacion;
+  final Map<String, dynamic> informacion;
 
   const ResponderEncuestaView({Key? key, required this.informacion}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> resultado = json.decode(informacion)['data'][0];
-print(resultado);
     // Extraer información de la encuesta
-    String tituloEncuesta = resultado['titulo'];
-    List<dynamic> preguntas = resultado['preguntas'];
-    int idEncuesta = resultado['Id_encuesta'];
+    String tituloEncuesta = informacion['titulo'];
+    List<dynamic> preguntas = informacion['preguntas'];
+    int idEncuesta = informacion['Id_encuesta'];
 
     // Lista para almacenar las respuestas
     List<String?> respuestas = List.generate(preguntas.length, (index) => null);
